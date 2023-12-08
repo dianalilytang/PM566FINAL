@@ -10,6 +10,8 @@ Data Source: https://data.cdc.gov/Public-Health-Surveillance/Rates-of-Laboratory
 
 Data Source CSV: RSV2.CSV
 
+The dataset can also be found in the DATAFOLDER folder with specific instructions on how to export the data. 
+
 Source Code: The source code with the complete syntax can be found under the file: RSVFINAL.html 
 
 Report PDF: PM 566 Final Project Report Diana Tang.pdf
