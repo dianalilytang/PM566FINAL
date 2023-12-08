@@ -16,4 +16,4 @@ Source Code: The source code with the complete syntax can be found under the fil
 
 Report PDF: PM 566 Final Project Report Diana Tang.pdf
 
-https://github.com/dianalilytang/PM566FINAL/tree/main
+[https://github.com/dianalilytang/PM566FINAL/tree/main](https://github.com/USCbiostats/PM566/issues/75)https://github.com/USCbiostats/PM566/issues/75
