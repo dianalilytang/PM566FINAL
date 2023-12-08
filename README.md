@@ -8,6 +8,8 @@ Website link: https://dianalilytang.github.io/PM566FINAL/
 
 Data Source: https://data.cdc.gov/Public-Health-Surveillance/Rates-of-Laboratory-Confirmed-RSV-COVID-19-and-Flu/kvib-3txy/about_data
 
+Data Source CSV: RSV2.CSV
+
 Source Code: The source code with the complete syntax can be found under the file: RSVFINAL.html 
 
 Report PDF: PM 566 Final Project Report Diana Tang.pdf
