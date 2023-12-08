@@ -1,0 +1,90 @@
+---
+title: "Download the report"
+author: "Diana Tang"
+prefer-html: true
+format: 
+  pdf:
+    toc: true
+---
+
+## Introduction
+
+From 2022-2023 the pediatric population was hit with a surge in respiratory syncytial virus (RSV) like never before. While previously believed to be a common virus among babies, this past winter RSV infected an increasingly large number of young children in the 0-4 age group. Children's hospitals were now overflowing with a particularly harsh respiratory season of RSV. COVID-19, Influenza, and Human Metapneumovirus were among the many respiratory illnesses that led to a lack of beds in children's hospitals. While children's hospitals went surprisingly empty during most of the pandemic from COVID-19, the winter of 2022-2023 escalated to a public health disaster with shortages of oxygen and beds for children while hospitals continued to fight the surges of COVID-19 in the adult population.
+
+**To examine this finding closer the proposed questions aim to shed light on the data.**
+
+1.  Did seasonality and patterns change in how RSV emerged in the 2022-2023 year compared to the pre-COVID-19 pandemic season of 2018-2019?
+
+2.  Were certain pediatric age groups truly more susceptible to RSV compared to FLU or COVID in the 2022-2023 year?
+
+3.  What trends are observed and what might they foretell?
+
+## Methods
+
+Data was acquired through the public Center for Disease and Control data sources specifically within the Public Health Surveillance Systems. Three population-based surveillance systems were used including COVID-NET, RSV-NET, and FluSurv-NET and combined to form RESP-NET. The weekly Combined data rate represented the sum of the COVID-19, FLU, and RSV weekly rates. These surveillance systems collected laboratory confirmed hospitalization cases of RSV, COVID-19, and Flu from over 250 acute-care hospitals in 14 states. The current datasets used for this project were collected and updated to December 1st, 2023.
+
+Axis were standardized to allow the visualization of seasons. Respective viral seasons were recorded as weeks 40 - 52 of the initial year and then weeks 1 - 18 of the following year. For example, the 2018 - 2019 season would follow weeks 40 - 52 of 2018, and then weeks 1 - 18 of 2019. This would correlate to October of 2018 to May of 2019, roughly covering the seasons of Fall, Winter, and Spring.
+
+During the exploratory data analysis portion, the initial dimensions of the dataset were confirmed with 11 columns and 30,764 rows of data, consistent with the dataset dimensions as portrayed on the data.cdc.gov website when the data was pulled. The head of the data was consistent showing the 2018-19 season data compared to the tail of the data showing the 2022-23 season. Variable types were confirmed with surveillance type and age groups being characters. Season, year, and weeks were numbers. Weekly and cumulative rates were considered numerators.
+
+Of the variables portrayed, the dataset was narrowed down to looking at the surveillance type (FLU vs. COVID vs. RSV), season, year, week, age group, weekly rates, sites, and cumulative rate. To answer the main questions, data was narrowed down further to keep the 2018-19 season, 2022-23 season, and the following age groups: "Pediatric", "0-\<1 year", "1-4 year", "5-11 years", "12-17 years".
+
+Upon further inspection of the variables it was discovered that NAs existed for the cumulative and weekly rates of the "Combined" sources for the 18-19 season. At the time, COVID-19 rates were not under surveillance and captured for the 18-19 data, so a combined surveillance of COVID-19, FLU, and RSV did not exist for either cumulative or weekly rates. As previously mentioned, Combined data was the summation of the respective weekly or cumulative rates of COVID-19, FLU, and RSV. To amend this, Combined surveillance was removed from the dataset. From the data, average pediatric rates were compiled by combining the weekly rates of each pediatric age group to form a mean value that represented ages 0 - 17.
+
+The tools used to explore the data were primarily taken from the dplyr library to filter and select from the initial data set. The dplyr library also allowed for the closer examination of the variables. The knitr, ggplot, and gridExtra libraries were used for visualization and further analysis of the data. The plotly library was used for the interactive visualizations.
+
+## Results
+
+#### **Figure 1. Seasonality in 2018-2019 vs. 2022-2023**
+
+![](images/Figure1-01.png)
+
+*Figure 1. Depiction of the 2018-2019 RSV Weekly Hospitalizations and 2022-2023 RSV Weekly Hospitalizations over the span of October, Year 1 (2018 or 2022) to May, Year 2 (2019 or 2023). This follows weeks 40-52 of Year 1 and weeks 1-8 of Year 2. Hovering over the graph will display the respective weekly RSV hospitalization rate, week, and year.*
+
+#### **Figure 2. RSV, FLU, COVID-19 2022 - 2023 by Age Group**
+
+![](images/Figure%202a.png)
+
+*Figure 2. The above figures display the weekly hospitalization rates for the respective respiratory illness for each age group in three separate graphs.*
+
+#### Figure 3. Comparing FLU, RSV, and COVID-19 Pediatric Averages
+
+*Figure 3. All weekly hospitalization rates for each group were compiled to calculate an average "Pediatric" rate for the respective respiratory illnesses of the 2022-2023 season.*
+
+#### Figure 4. Age 0 - \<1 year Hospitalization Rates 2022 - 2023
+
+*Figure 4. Displayed above is an interactive barplot showing the weekly hospitalization rates for the respiratory illnesses in the age 0 - \<1 year group for the 2022 - 2023 season in chronological order. Hovering over the graph should display the date, weekly hospitalization rate, and respiratory virus.*
+
+#### Figure 5. RSV 2022 - 2023 Boxplot Visualization Age 0 - \< 1 year
+
+*Figure 5. Boxplot of the hospitalization rates of the respiratory viruses for the age 0 - \<1 year group of the 2022-2023 season.*
+
+#### Figure 6. Interactive Seasons of Respiratory Virus Weekly Hospitalizations Rates 2018-2023 of Age 0 - \<1 Year Group
+
+*Figure 6. Interactive plot showing weekly hospitalization rates for respective respiratory viruses for the age 0 - \<1 year group. Hovering over the data will show the weekly rate, date, and virus surveillance name.*
+
+## Statistical Summary Tables
+
+### Table 1. 2022 - 2023 Weekly RSV Hospitalization Rate Summaries
+
+#### Table 2. 2022 - 2023 COVID vs. FLU vs. RSV Hospitalization Rate Summaries
+
+## Conclusion
+
+From the preliminary results we can see a clear difference between the 2018-2019 RSV hospitalization rates and 2022-2023 RSV hospitalization rates. Overall, we can see that the averages were significantly higher in 2022 and 2023 compared to 2018 to 2019. The peak weekly rate in the 22-23 season was approximately 53.85 hospitalizations per 100,000 which was roughly 3.2 times as high as the peak in the 18-19 season of 16.875 hospitalizations per 100,000. Additionally, after inspecting the 2018-2019 season closer, we can see that the peak correlated to the seasonality/cyclic pattern seen historically with RSV. The 2018-2019 peaked at week 52 of 2018, consistent with the last week of the the 2018 year, and began to downtrend after. In the 2022 - 2023 season the peak was seen at week 45 which was consistent with early-mid November of the 2022 year.
+
+This showed that the rise of cases began even prior to November and potentially with the return to school in the September months. Cases may have began to exponentially rise as more students and caretakers were returning to in-person activities as mask-mandates began to relax during this time. While seasonality may now be shifted, questions continue to be proposed if children's hospitals are equipped for another RSV surge. Of further interest would be further analysis that may look into how pandemic precautions and non-medical interventions of staying at home and masking may have contributed to the lack of RSV immunity communities have normally seen prior to the pandemic.
+
+With respect to the second question proposed, the preliminary results showed that hospitalizations rates for the respiratory viruses under surveillance disproportionately affected the the 0 - \< 1 age group. Visually, RSV and COVID-19 hospitalizations were dominated by the 0 - \<1 age group. The FLU surveillance showed more broad hospitalizations among all age groups. However, once the data of COVID-19, FLU, and RSV were placed next to each other, it was clear that RSV remained the major infection amongst the hospitalizations for the 2022 - 2023. While no concrete treatment exists for RSV apart from oxygen support, the push to study and find quicker solutions to minimize RSV hospitalizations and hospitalization lengths of stay continues. As this data has shown how the COVID-19 pandemic continues to influence and change how we understand previous and current diseases processes such as RSV in the pediatric population.
+
+## Summary
+
+From the data analysis shown above we can answer the three questions initially proposed.
+
+1.  **Did seasonality and patterns change in how RSV emerged in the 2022-2023 year compared to the pre-COVID-19 pandemic season of 2018-2019?** From the data, seasonality truly did change with the 2022-2023 RSV season peaking in November instead of the typical December-January. Fascinatingly, the preliminary data seen for the 2023-2024 season also appear to show a peak in November.
+
+2.  **Were certain pediatric age groups truly more susceptible to RSV compared to FLU or COVID in the 2022-2023?** Across the board, the age group of 0 - \<1 year were seen to have the highest amount of hospitalizations for RSV, FLU, and COVID. It is no surprise then that RSV showed how the 0-\<1 year age group was extremely susceptible to RSV for the 2022-2023 season.
+
+3.  **What trends are observed and what might they foretell?** First and foremost, seasonality of RSV appears to have shifted since the 2020 COVID pandemic with earlier incidences in the summer season and peaks in mid-Fall. This is a significant shift from the previous peaks observed in December-January months. As a consequence, RSV education, vaccination, and hospitalization preparation must now adapt and shift to earlier interventions with the changes in seasonality. This in return may lessen the hospital burden previously seen in the 2022-2023 season, specifically with the vulnerable group of 0 - \<1 year old pediatric patients.
+
+The main changes since this report was last submitted as a midterm project are summarized as follows: The "Combined" variable was clarified and defined in the methods section. Weekly and cumulative rates were considered numeric values, not integers. Most x-axis were appropriately adjusted to be more consistent and reflective of the actual year values. If an x-axis was different, it was to reflect the true month-year chronological order. Additionally, some new plots were generated to be interactive and to better see the comparison of patterns.

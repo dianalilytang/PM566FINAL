@@ -1,0 +1,10 @@
+---
+title: "Data Source"
+---
+
+Data was exported from the following Centers for Disease Control and Prevention website with the following link:
+
+https://data.cdc.gov/Public-Health-Surveillance/Rates-of-Laboratory-Confirmed-RSV-COVID-19-and-Flu/kvib-3txy/about_data
+ 
+The most recent update to the dataset of Rates of Laboratory-Confirmed RSV, COVID-19, and Flu Hospitalizations from the RESP-NET Surveillance Systems was on December 1st, 2023. Data used for the purpose of this project is also up to date. 
+

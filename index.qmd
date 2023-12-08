@@ -1,0 +1,241 @@
+---
+title: "PM 566 Final Project RSV"
+---
+
+```{r, echo = FALSE, message = FALSE}
+
+library(dplyr)
+library(ggplot2)
+library(lubridate)
+library(gridExtra)
+library(knitr)
+library(plotly)
+RSVsurv <- read.csv("/Users/dianalilytang/Desktop/DESK/RSV3.csv")
+```
+
+## Introduction
+
+From 2022-2023 the pediatric population was hit with a surge in respiratory syncytial virus (RSV) like never before. While previously believed to be a common virus among babies, this past winter RSV infected an increasingly large number of young children in the 0-4 age group. Children's hospitals were now overflowing with a particularly harsh respiratory season of RSV. COVID-19, Influenza, and Human Metapneumovirus were among the many respiratory illnesses that led to a lack of beds in children's hospitals. While children's hospitals went surprisingly empty during most of the pandemic from COVID-19, the winter of 2022-2023 escalated to a public health disaster with shortages of oxygen and beds for children while hospitals continued to fight the surges of COVID-19 in the adult population.
+
+**To examine this finding closer the proposed questions were proposed to shed light on the RSV patterns.**
+
+1.  Did seasonality and patterns change in how RSV emerged in the 2022-2023 year compared to the pre-COVID-19 pandemic season of 2018-2019?
+
+2.  Were certain pediatric age groups truly more susceptible to RSV compared to FLU or COVID in the 2022-2023 year?
+
+3.  What trends are observed and what might they foretell?
+
+```{r, echo=FALSE}
+#dim(RSVsurv)
+#head(RSVsurv)
+#tail(RSVsurv)
+#str(RSVsurv)
+```
+
+```{r, echo=FALSE, message = FALSE}
+#Renaming labels for easier use and manipulation
+
+names(RSVsurv)[names(RSVsurv)== "Surveillance.Network"] <- "SURVNET"
+names(RSVsurv)[names(RSVsurv)== "Season"] <- "SN"
+names(RSVsurv)[names(RSVsurv)== "MMWR.Year"] <- "YEAR"
+names(RSVsurv)[names(RSVsurv)== "MMWR.Week"] <- "WEEK"
+names(RSVsurv)[names(RSVsurv)== "Age.group"] <- "AGE"
+names(RSVsurv)[names(RSVsurv)== "Site"] <- "SITE"
+names(RSVsurv)[names(RSVsurv)== "Weekly.Rate"] <- "WKRT"
+names(RSVsurv)[names(RSVsurv)== "Cumulative.Rate"] <- "CMRT"
+
+RSVsurv2.0 <- select(RSVsurv, SURVNET, SN, YEAR, WEEK, AGE, SITE, WKRT, CMRT)
+```
+
+```{r, echo=FALSE}
+#Finding out the unique subcategories
+#unique(RSVsurv2.0$AGE)
+#unique(RSVsurv2.0$SITE)
+#unique(RSVsurv2.0$SN)
+```
+
+```{r, echo=FALSE}
+#Filtering dataset to only contain 2018-2019 pre-pandemic season and the 2022-2023 season, 2023 - 2024
+RSVsurv3.0 <- RSVsurv2.0 %>% filter(SN == '2018-19' | SN == '2022-23' | SN == '2023-24' )
+```
+
+```{r, echo=FALSE}
+#Keeping certain age groups
+RSVsurv3.0 <- RSVsurv3.0 %>% filter(AGE == "Pediatric" | AGE == '0-<1 year' | AGE == '1-4 years' | AGE == '5-11 years' | AGE == '12-17 years')
+```
+
+```{r, echo=FALSE}
+#Summary overview
+#summary(RSVsurv3.0)
+```
+
+```{r, echo=FALSE}
+#Inspecting the variables to closer details
+#table(RSVsurv3.0$SURVNET)
+#table(RSVsurv3.0$AGE)
+#table(RSVsurv3.0$SITE)
+```
+
+```{r,echo=FALSE}
+#Inspecting the variables to closer details for any NAs
+#table(is.na(RSVsurv3.0))
+#table(is.na(RSVsurv3.0$WKRT))
+#table(is.na(RSVsurv3.0$CMRT))
+```
+
+```{r, echo=FALSE}
+#Removing combined data due to lack of recorded COVID in 1819 to amend the NAs
+RSVsurv4.0 <- RSVsurv3.0 %>% filter(SURVNET == "COVID-NET" | SURVNET == "FluSurv-NET" | SURVNET == "RSV-NET")
+#table(is.na(RSVsurv4.0))
+```
+
+### Figure 1. Seasonality in 2018-2019 vs. 2022-2023
+
+```{r, echo = FALSE}
+#Filter dataset to RSV 2018 - 2019 data
+RSV1819 <- RSVsurv4.0 %>%
+  filter(SURVNET == "RSV-NET", YEAR %in% c(2018, 2019))
+
+#Add 52 to the 2019 data to allow for chronological visualization
+RSV1819 <- RSV1819 %>%
+  mutate(WEEK = ifelse(YEAR == 2019, WEEK + 52, WEEK))
+
+#Create an average weekly rate of hospitalizations from all age groups to create an average pediatric rate for the range of ages 0 - 17
+RSV1819 <- RSV1819 %>%
+  group_by(WEEK) %>%
+  mutate(AVGWKRT = mean(WKRT, na.rm = TRUE))
+
+#Filter dataset to RSV 2022 - 2023 data
+RSV2223 <- RSVsurv4.0 %>%
+  filter(SURVNET == "RSV-NET", YEAR %in% c(2022, 2023)) %>%
+  filter(!(YEAR == 2023 & WEEK > 18)) %>%
+  mutate(WEEK = ifelse(YEAR == 2023, WEEK + 52, WEEK))
+
+#Create an average weekly rate of hospitalizations from all age groups to create an average Pedaitric rate for the range of ages 0 - 17
+RSV2223 <- RSV2223 %>%
+  group_by(WEEK) %>%
+  mutate(AVGWKRT = mean(WKRT, na.rm = TRUE))
+
+# Combine RSV 18-19 and RSV 22-23 data
+CombinedRSV <- bind_rows(
+  mutate(RSV1819, Dataset = "RSV 18-19"),
+  mutate(RSV2223, Dataset = "RSV 22-23")
+)
+
+CRSV <- ggplot(data = CombinedRSV, aes(x = WEEK, y = AVGWKRT, color = as.factor(YEAR))) +
+  geom_point() +
+  geom_line(aes(group = interaction(Dataset, YEAR)), linetype = "dashed") +
+  labs(title = "Average Pediatric Weekly RSV Hospitalization Rates", 
+       x = "Weeks 40 - 52 of 2018/2022 to Weeks 1 - 18 of 2019/2023", y = "Hospitalization Rates per 100,000") +
+  scale_x_continuous(breaks = seq(1, 104, by = 2), labels = seq(1, 104, by = 2)) +
+  guides(color = guide_legend(title = "Color Key")) 
+
+ICRSV <- ggplotly(CRSV)
+
+ICRSV
+```
+
+*Figure 1. Depiction of the 2018-2019 RSV Weekly Hospitalizations and 2022-2023 RSV Weekly Hospitalizations over the span of October, Year 1 (2018 or 2022) to May, Year 2 (2019 or 2023). This follows weeks 40-52 of Year 1 and weeks 1-8 of Year 2. Hovering over the graph will display the respective weekly RSV hospitalization rate, week, and year.*
+
+### Figure 2. Age 0 - \<1 Hospitalization Rates 2022 - 2023
+
+```{r, echo= FALSE}
+#Combine the YEAR and WEEK columns to create a Date object
+RSVsurv4.0 <- RSVsurv4.0 %>%
+  mutate(Date = as.Date(paste0(YEAR, "-", WEEK, "-1"), format="%Y-%U-%u"))
+
+#Filter the RSV SURV dataset to just the 0-<1 yr age group for the 2022-2023 season
+BABIES2223 <- RSVsurv4.0 %>%
+  filter(AGE == "0-<1 year", YEAR %in% c(2022, 2023))
+
+#Add 52 to the 2023 data to allow for chronological visualization
+BABIES2223 <- BABIES2223 %>%
+  mutate(WEEK = ifelse(YEAR == 2023, WEEK + 52, WEEK))
+
+#Create ggplot object with the Date variable
+BABIES2223BARPLOT <- ggplot(data = BABIES2223, aes(x = Date, y = WKRT, fill = SURVNET)) +
+  geom_bar(stat = "identity", position = "dodge", width = 7) +  # Adjust width as needed
+  labs(title = "COVID-19 vs. FLU vs. RSV for the 0-<1 yr Age Group",
+       y = "Hospitalizations per 100,000") +
+  scale_x_date(date_breaks = "2 months", date_labels = "%b %Y") +  # Set breaks to every other month
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +  # Rotate x-axis labels vertically
+  scale_fill_manual(values = c("FluSurv-NET" = "mediumaquamarine", "RSV-NET" = "lightpink", "COVID-NET" = "mediumpurple")) +
+  guides(fill = guide_legend(title = "Respiratory Virus"))
+
+IBABIES2223BARPLOT <- ggplotly(BABIES2223BARPLOT)
+
+IBABIES2223BARPLOT
+```
+
+*Figure 2. Displayed above is an interactive barplot showing the weekly hospitalization rates for the respiratory illnesses in the age 0 - \<1 year group for the 2022 - 2023 season in chronological order. Hovering over the graph should display the date, weekly hospitalization rate, and respiratory virus.*
+
+### Figure 3. Interactive Seasons of Respiratory Virus Weekly Hospitalizations Rates 2018-2023
+
+```{r, echo = FALSE, warning = FALSE}
+RSVsurv <- RSVsurv %>% filter(SURVNET == "COVID-NET" | SURVNET == "FluSurv-NET" | SURVNET == "RSV-NET")
+RSVsurv$YEAR <- as.factor(RSVsurv$YEAR)
+RSVsurv$WEEK <- as.factor(RSVsurv$WEEK)
+
+#Filter data for Age 0 < 1 year group
+FD <- RSVsurv %>%
+  filter(AGE == "0-<1 year") %>%
+  arrange(YEAR, WEEK)
+
+#Combine YEAR and WEEK for chronological order
+FD$YEAR_WEEK <- paste(FD$YEAR, FD$WEEK, sep = "-")
+
+#Convert to DATE
+FD$YEAR_WEEK <- as.Date(paste0(FD$YEAR_WEEK, "-1"), format="%Y-%U-%u")
+
+SEASONS <- plot_ly(FD, x = ~YEAR_WEEK, y = ~WKRT, type = 'scatter', mode = 'lines+markers',
+                            color = ~SURVNET, name = ~SURVNET) %>%
+  layout(title = "Weekly Rates of Respiratory Virus-Associated Hospitalizations by Season (Age 0-<1 year)",
+         xaxis = list(title = "Year"),
+         yaxis = list(title = "Rate per 100,000 population"),
+         showlegend = TRUE,
+         hovermode = "closest")
+
+SEASONS
+```
+
+*Figure 3. Interactive plot showing weekly hospitalization rates for respective respiratory viruses for the age 0 - \<1 year group. Hovering over the data will show the weekly rate, date, and virus surveillance name.*
+
+## Statistical Summary Tables
+
+### Table 1. 2022 - 2023 Weekly RSV Hospitalization Rate Summaries
+
+```{r, echo = FALSE}
+RSV2223SUMMARY <- RSV2223 %>%
+  group_by(AGE) %>%
+  summarise(
+    Mean = mean(WKRT, na.rm = TRUE),
+    Median = median(WKRT, na.rm = TRUE),
+    SD = sd(WKRT, na.rm = TRUE),
+    Min = min(WKRT, na.rm = TRUE),
+    Max = max(WKRT, na.rm = TRUE)
+  )
+kable(RSV2223SUMMARY, format = "html")
+```
+
+### Table 2. 2022 - 2023 COVID vs. FLU vs. RSV Hospitalization Rate Summaries
+
+```{r, echo = FALSE}
+BABIES2223SUMMARY <- BABIES2223 %>%
+  group_by(SURVNET) %>%
+  summarise(
+    Mean = mean(WKRT, na.rm = TRUE),
+    Median = median(WKRT, na.rm = TRUE),
+    SD = sd(WKRT, na.rm = TRUE),
+    Min = min(WKRT, na.rm = TRUE),
+    Max = max(WKRT, na.rm = TRUE)
+  )
+kable(BABIES2223SUMMARY, format = "html")
+```
+
+From the data analysis shown above we can answer the three questions initially proposed.
+
+1.  **Did seasonality and patterns change in how RSV emerged in the 2022-2023 year compared to the pre-COVID-19 pandemic season of 2018-2019?** From the data, seasonality truly did change with the 2022-2023 RSV season peaking in November instead of the typical December-January. Fascinatingly, the preliminary data seen for the 2023-2024 season also appear to show a peak in November.
+
+2.  **Were certain pediatric age groups truly more susceptible to RSV compared to FLU or COVID in the 2022-2023?** Across the board, the age group of 0 - \<1 year were seen to have the highest amount of hospitalizations for RSV, FLU, and COVID. It is no surprise then that RSV showed how the 0-\<1 year age group was extremely susceptible to RSV for the 2022-2023 season.
+
+3.  **What trends are observed and what might they foretell?** First and foremost, seasonality of RSV appears to have shifted since the 2020 COVID pandemic with earlier incidences in the summer season and peaks in mid-Fall. This is a significant shift from the previous peaks observed in December-January months. As a consequence, RSV education, vaccination, and hospitalization preparation must now adapt and shift to earlier interventions with the changes in seasonality. This in return may lessen the hospital burden previously seen in the 2022-2023 season, specifically with the vulnerable group of 0 - \<1 year old pediatric patients.
